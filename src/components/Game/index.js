@@ -18,8 +18,6 @@ export default Game = () => {
     projectiles: [],
     enemies: [],
   });
-  // const [projectiles, setProjectiles] = useState([]);
-  // const [enemies, setEnemies] = useState([]);
 
   // add projectiles when press
   const handlePress = (e) => {
@@ -35,7 +33,6 @@ export default Game = () => {
       color: 'red',
       velocity: velocity,
     }
-    // setProjectiles(prev => [...prev, newProjectile]);
     setParticles(prev => {
       return {
         ...prev,
@@ -119,44 +116,8 @@ export default Game = () => {
       enemies: updatedEnemies,
     })
   });
+}
 
-    // setProjectiles(prev => {
-    //   let updatedProjectiles;
-    //   updatedProjectiles = prev.map(projectile => {return {
-    //     ...projectile,
-    //     x: projectile.x + projectile.velocity.x,
-    //     y: projectile.y + projectile.velocity.y,
-    //   }
-    // });
-    //   return (updatedProjectiles)
-    // });
-
-    // setEnemies(prev => {
-    //   let updatedEnemies;
-    //   updatedEnemies = prev.map(enemy => {return {
-    //     ...enemy,
-    //     x: enemy.x + enemy.velocity.x,
-    //     y: enemy.y + enemy.velocity.y,
-    //   }
-    // });
-    //   return (updatedEnemies)
-    // });
-  }
-
-  // checking if projectiles collide with an enemy
-  // const collide = () => {
-  //   particles.enemies.forEach((enemy, enemyIndex) => {
-  //     particles.projectiles.forEach((projectile, projectileIndex) => {
-  //       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
-  //       // objects touch
-  //       if(dist - enemy.radius - projectile.radius < 1) {
-  //         setEnemies(prev => prev.splice(enemyIndex, 1));
-  //         setProjectiles(prev => prev.splice(projectileIndex, 1));
-  //       }
-
-  //     });
-  //   });
-  // }
   
   // called at first render to start game 60 fps
   useEffect(() => {
