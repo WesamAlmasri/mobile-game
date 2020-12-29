@@ -8,6 +8,8 @@ import Projectile from '../Projectile';
 import styles from './styles'
 
 const frames = 60;
+const playerRadius = 25;
+let animationId;
 
 height = Dimensions.get('window').height
 width = Dimensions.get('window').width
@@ -102,8 +104,16 @@ export default Game = () => {
 
     // check for collide
     updatedEnemies.forEach((enemy, enemyIndex) => {
+
+      const dist = Math.hypot(width / 2 - enemy.x, height / 2 - enemy.y);
+      if(dist - enemy.radius - playerRadius < 1) {
+        // end game
+        clearInterval(animationId);
+      }
+
       updatedProjectiles.forEach((projectile, projectileIndex) => {
         const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+        
         // objects touch
         if(dist - enemy.radius - projectile.radius < 1) {
           updatedEnemies.splice(enemyIndex, 1);
@@ -122,10 +132,10 @@ export default Game = () => {
   // called at first render to start game 60 fps
   useEffect(() => {
     spawnEnemies();
-    const tick = setInterval(() => {
+    animationId = setInterval(() => {
       update();
     }, 1/frames);
-    return () => clearInterval(tick);
+    return () => clearInterval(animationId);
   },[]);
 
   return (
@@ -134,7 +144,7 @@ export default Game = () => {
         <Player 
           x={width/2}
           y={height/2}
-          radius={25}
+          radius={playerRadius}
           color='blue'
         />
         {particles.enemies.map((enemy, index) => 
