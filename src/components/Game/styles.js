@@ -11,5 +11,12 @@ export default styles = StyleSheet.create({
       height: height,
       width: width,
     },
+    pressable: {
+      position: 'absolute',
+      height: height,
+      width: width,
+      zIndex: 100,
+      flex: 1,
+    },
   });
   

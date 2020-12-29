@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 export default Projectile = (props) => {
-  const { x, y, radius, color } = props;
+  const { x, y, radius, color, velocity } = props;
   return (
     <View style={{
       position: 'absolute',
