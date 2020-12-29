@@ -102,7 +102,8 @@ export default Game = () => {
       }
     });
 
-    // check for collide
+
+    // check for collide and check for projectiles leaving the view
     updatedEnemies.forEach((enemy, enemyIndex) => {
 
       const dist = Math.hypot(width / 2 - enemy.x, height / 2 - enemy.y);
@@ -112,6 +113,7 @@ export default Game = () => {
       }
 
       updatedProjectiles.forEach((projectile, projectileIndex) => {
+
         const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
         
         // objects touch
@@ -119,6 +121,12 @@ export default Game = () => {
           updatedEnemies.splice(enemyIndex, 1);
           updatedProjectiles.splice(projectileIndex, 1);
         }
+
+        // projectiles leaving the view
+        if(projectile.x - projectile.radius < 0 || projectile.x - projectile.radius > width || projectile.y - projectile.radius < 0  || projectile.y - projectile.radius > height) {
+          updatedProjectiles.splice(projectileIndex, 1);
+        }
+
       });
     });
     return ({
@@ -138,6 +146,7 @@ export default Game = () => {
     return () => clearInterval(animationId);
   },[]);
 
+  console.log('proj :', particles.projectiles.length)
   return (
     <View style={styles.container}>
       <Pressable onPress={handlePress} style={styles.pressable} />
