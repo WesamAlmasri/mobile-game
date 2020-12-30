@@ -2,20 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { View,
         Dimensions,
         Pressable,
+        SafeAreaView,
        } from 'react-native';
 import Player from '../Player';
 import Projectile from '../Projectile';
 import Enemy from '../Enemy';
 import Fragment from '../Fragment';
 import styles from './styles'
+import ScoreLabel from '../ScoreLabel';
 
 const frames = 30;
 const playerRadius = 10;
 const friction = 0.98;
 let animationId;
+let spawnEnemyId;
 
-height = Dimensions.get('window').height
-width = Dimensions.get('window').width
+height = Dimensions.get('window').height;
+width = Dimensions.get('window').width;
 
 
 export default Game = () => {
@@ -23,6 +26,7 @@ export default Game = () => {
     projectiles: [],
     enemies: [],
     fragments: [],
+    score: 0,
   });
 
   // add projectiles when press
@@ -49,7 +53,7 @@ export default Game = () => {
 
   // create random enemies
   const spawnEnemies = () => {
-    setInterval(() => {
+    spawnEnemyId = setInterval(() => {
       const radius = Math.random() * (30 - 5) + 5;
 
       let x;
@@ -92,6 +96,9 @@ export default Game = () => {
       let updatedProjectiles;
       let updatedEnemies;
       let updatedEFragments;
+      let updatedScore;
+
+      updatedScore = prev.score;
 
       updatedProjectiles = prev.projectiles.map(projectile => {return {
         ...projectile,
@@ -131,6 +138,7 @@ export default Game = () => {
       if(dist - enemy.radius - playerRadius < 1) {
         // end game
         clearInterval(animationId);
+        clearInterval(spawnEnemyId);
       }
 
       updatedProjectiles.forEach((projectile, projectileIndex) => {
@@ -153,9 +161,15 @@ export default Game = () => {
           }
 
           if(enemy.radius - 10 > 5) {
+            //increase score
+            updatedScore += 100;
+            // enemy shrink
             enemy.radius -= 5;
             updatedProjectiles.splice(projectileIndex, 1);
           } else {
+            //increase score
+            updatedScore += 250;
+            //remove from the scene
             updatedEnemies.splice(enemyIndex, 1);
             updatedProjectiles.splice(projectileIndex, 1);
           }
@@ -173,6 +187,7 @@ export default Game = () => {
       projectiles: updatedProjectiles,
       enemies: updatedEnemies,
       fragments: updatedEFragments,
+      score: updatedScore,
     })
   });
 }
@@ -189,7 +204,7 @@ export default Game = () => {
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Pressable onPress={handlePress} style={styles.pressable} />
         <Player 
           x={width/2}
@@ -225,6 +240,11 @@ export default Game = () => {
             color={projectile.color}
           />
         )}
-    </View>
+        <ScoreLabel 
+          style={styles.ScoreLabel}
+          score={particles.score} 
+        />
+        
+    </SafeAreaView>
   );
 }
