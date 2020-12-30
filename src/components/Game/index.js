@@ -117,10 +117,16 @@ export default Game = () => {
 
         const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
         
-        // objects touch
+        // when projectile touch
         if(dist - enemy.radius - projectile.radius < 1) {
-          updatedEnemies.splice(enemyIndex, 1);
-          updatedProjectiles.splice(projectileIndex, 1);
+          if(enemy.radius - 10 > 10) {
+            enemy.radius -= 5;
+            updatedProjectiles.splice(projectileIndex, 1);
+          } else {
+            updatedEnemies.splice(enemyIndex, 1);
+            updatedProjectiles.splice(projectileIndex, 1);
+          }
+          
         }
 
         // projectiles leaving the view
