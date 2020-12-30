@@ -7,7 +7,7 @@ width = Dimensions.get('window').width
 export default styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      backgroundColor: 'rgba(0, 0, 0, 0.9)',
       height: height,
       width: width,
     },

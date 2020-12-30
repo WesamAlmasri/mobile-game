@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View,
         Dimensions,
         Pressable,
@@ -7,8 +7,8 @@ import Player from '../Player';
 import Projectile from '../Projectile';
 import styles from './styles'
 
-const frames = 60;
-const playerRadius = 25;
+const frames = 30;
+const playerRadius = 10;
 let animationId;
 
 height = Dimensions.get('window').height
@@ -20,19 +20,20 @@ export default Game = () => {
     projectiles: [],
     enemies: [],
   });
+  const container = useRef();
 
   // add projectiles when press
   const handlePress = (e) => {
     const angle = Math.atan2(e.nativeEvent.locationY - height / 2, e.nativeEvent.locationX - width / 2)
     const velocity ={
-      x: Math.cos(angle),
-      y: Math.sin(angle)
+      x: Math.cos(angle) * 6,
+      y: Math.sin(angle) * 6,
     }
     const newProjectile = {
       x: width / 2,
       y: height / 2,
-      radius:10,
-      color: 'red',
+      radius:5,
+      color: 'white',
       velocity: velocity,
     }
     setParticles(prev => {
@@ -58,7 +59,7 @@ export default Game = () => {
         y = Math.random() < 0.5 ? 0 - radius : height + radius;
       }
       
-      const color = 'green';
+      const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
       const angle = Math.atan2(height / 2 - y, width / 2 - x)
       const velocity ={
         x: Math.cos(angle),
@@ -146,15 +147,16 @@ export default Game = () => {
     return () => clearInterval(animationId);
   },[]);
 
-  console.log('proj :', particles.projectiles.length)
-  return (
-    <View style={styles.container}>
+
+  return (<>
+  {/* <View  style={{height: height, width: width, position: 'absolute', backgroundColor: 'rgba(0, 0, 0, 1)'}}></View> */}
+    <View ref={container} style={styles.container}>
       <Pressable onPress={handlePress} style={styles.pressable} />
         <Player 
           x={width/2}
           y={height/2}
           radius={playerRadius}
-          color='blue'
+          color='white'
         />
         {particles.enemies.map((enemy, index) => 
           <Projectile 
@@ -175,5 +177,5 @@ export default Game = () => {
           />
         )}
     </View>
-  );
+  </>);
 }
