@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View,
         Dimensions,
         Pressable,
        } from 'react-native';
 import Player from '../Player';
 import Projectile from '../Projectile';
+import Enemy from '../Enemy';
+import Fragment from '../Fragment';
 import styles from './styles'
 
 const frames = 30;
@@ -19,8 +21,8 @@ export default Game = () => {
   const [particles, setParticles] = useState({
     projectiles: [],
     enemies: [],
+    fragments: [],
   });
-  const container = useRef();
 
   // add projectiles when press
   const handlePress = (e) => {
@@ -88,6 +90,7 @@ export default Game = () => {
     setParticles(prev => {
       let updatedProjectiles;
       let updatedEnemies;
+      let updatedEFragments;
 
       updatedProjectiles = prev.projectiles.map(projectile => {return {
         ...projectile,
@@ -103,6 +106,20 @@ export default Game = () => {
       }
     });
 
+    updatedEFragments = prev.fragments.map(fragment => {return {
+      ...fragment,
+      x: fragment.x + fragment.velocity.x,
+      y: fragment.y + fragment.velocity.y,
+    }
+  });
+
+    // decrese fragments opacity and delete them after certian value
+    updatedEFragments.forEach((fragment, fragmentIndex) => {
+      fragment.alpha -= 0.005;
+      if(fragment.alpha <= 0){
+        updatedEFragments.splice(fragmentIndex, 1);
+      }
+    })
 
     // check for collide and check for projectiles leaving the view
     updatedEnemies.forEach((enemy, enemyIndex) => {
@@ -119,7 +136,19 @@ export default Game = () => {
         
         // when projectile touch
         if(dist - enemy.radius - projectile.radius < 1) {
-          if(enemy.radius - 10 > 10) {
+
+          for(let i = 0; i < 8; i++) {
+            updatedEFragments.push({
+              x: projectile.x,
+              y: projectile.y,
+              radius: 3,
+              color: enemy.color,
+              velocity: {x: Math.random() -0.5, y: Math.random() -0.5},
+              alpha: 0.3,
+            })
+          }
+
+          if(enemy.radius - 10 > 5) {
             enemy.radius -= 5;
             updatedProjectiles.splice(projectileIndex, 1);
           } else {
@@ -139,6 +168,7 @@ export default Game = () => {
     return ({
       projectiles: updatedProjectiles,
       enemies: updatedEnemies,
+      fragments: updatedEFragments,
     })
   });
 }
@@ -154,9 +184,8 @@ export default Game = () => {
   },[]);
 
 
-  return (<>
-  {/* <View  style={{height: height, width: width, position: 'absolute', backgroundColor: 'rgba(0, 0, 0, 1)'}}></View> */}
-    <View ref={container} style={styles.container}>
+  return (
+    <View style={styles.container}>
       <Pressable onPress={handlePress} style={styles.pressable} />
         <Player 
           x={width/2}
@@ -165,12 +194,22 @@ export default Game = () => {
           color='white'
         />
         {particles.enemies.map((enemy, index) => 
-          <Projectile 
+          <Enemy 
             key={index}
             x={enemy.x}
             y={enemy.y}
             radius={enemy.radius}
             color={enemy.color}
+          />
+        )}
+        {particles.fragments.map((fragment, index) => 
+          <Fragment 
+            key={index}
+            x={fragment.x}
+            y={fragment.y}
+            radius={fragment.radius}
+            color={fragment.color}
+            alpha={fragment.alpha}
           />
         )}
         {particles.projectiles.map((projectile, index) => 
@@ -183,5 +222,5 @@ export default Game = () => {
           />
         )}
     </View>
-  </>);
+  );
 }
