@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View,
-        Dimensions,
+import { Dimensions,
         Pressable,
         SafeAreaView,
        } from 'react-native';
@@ -10,6 +9,7 @@ import Enemy from '../Enemy';
 import Fragment from '../Fragment';
 import styles from './styles'
 import ScoreLabel from '../ScoreLabel';
+import CustomModal from '../CustomModal';
 
 const frames = 30;
 const playerRadius = 10;
@@ -28,6 +28,17 @@ export default Game = () => {
     fragments: [],
     score: 0,
   });
+  const [modalVisible, setModalVisible] = useState(true);
+
+  const onModalPressButton = () => {
+    setParticles({
+      projectiles: [],
+      enemies: [],
+      fragments: [],
+      score: 0,
+    });
+    setModalVisible(false);
+  }
 
   // add projectiles when press
   const handlePress = (e) => {
@@ -139,6 +150,7 @@ export default Game = () => {
         // end game
         clearInterval(animationId);
         clearInterval(spawnEnemyId);
+        setModalVisible(true);
       }
 
       updatedProjectiles.forEach((projectile, projectileIndex) => {
@@ -195,12 +207,14 @@ export default Game = () => {
   
   // called at first render to start game 60 fps
   useEffect(() => {
-    spawnEnemies();
-    animationId = setInterval(() => {
-      update();
-    }, 1/frames);
+    if(!modalVisible){
+       spawnEnemies();
+        animationId = setInterval(() => {
+          update();
+        }, 1/frames);
+    }
     return () => clearInterval(animationId);
-  },[]);
+  },[modalVisible]);
 
 
   return (
@@ -244,7 +258,13 @@ export default Game = () => {
           style={styles.ScoreLabel}
           score={particles.score} 
         />
-        
+        <CustomModal 
+          modalVisible={modalVisible}
+          onPressButton={onModalPressButton}
+          modalText1={particles.score}
+          modalText2='Points'
+          buttonText='Start Game'
+        />
     </SafeAreaView>
   );
 }
