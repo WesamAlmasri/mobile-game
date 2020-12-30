@@ -11,6 +11,7 @@ import styles from './styles'
 
 const frames = 30;
 const playerRadius = 10;
+const friction = 0.98;
 let animationId;
 
 height = Dimensions.get('window').height
@@ -115,6 +116,8 @@ export default Game = () => {
 
     // decrese fragments opacity and delete them after certian value
     updatedEFragments.forEach((fragment, fragmentIndex) => {
+      fragment.velocity.x *= friction;
+      fragment.velocity.y *= friction;
       fragment.alpha -= 0.005;
       if(fragment.alpha <= 0){
         updatedEFragments.splice(fragmentIndex, 1);
@@ -137,13 +140,14 @@ export default Game = () => {
         // when projectile touch
         if(dist - enemy.radius - projectile.radius < 1) {
 
-          for(let i = 0; i < 8; i++) {
+          // create explotions
+          for(let i = 0; i < enemy.radius / 2; i++) {
             updatedEFragments.push({
               x: projectile.x,
               y: projectile.y,
-              radius: 3,
+              radius: Math.random() * 3,
               color: enemy.color,
-              velocity: {x: Math.random() -0.5, y: Math.random() -0.5},
+              velocity: {x: (Math.random() -0.5) * (Math.random() * 6), y: (Math.random() -0.5) * (Math.random() * 6)},
               alpha: 0.3,
             })
           }
