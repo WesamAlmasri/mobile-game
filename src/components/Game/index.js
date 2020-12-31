@@ -11,7 +11,7 @@ import styles from './styles'
 import ScoreLabel from '../ScoreLabel';
 import CustomModal from '../CustomModal';
 
-const frames = 30;
+const frames = 60;
 const playerRadius = 10;
 const friction = 0.98;
 let animationId;
@@ -44,8 +44,8 @@ export default Game = () => {
   const handlePress = (e) => {
     const angle = Math.atan2(e.nativeEvent.locationY - height / 2, e.nativeEvent.locationX - width / 2)
     const velocity ={
-      x: Math.cos(angle) * 6,
-      y: Math.sin(angle) * 6,
+      x: Math.cos(angle) * 8,
+      y: Math.sin(angle) * 8,
     }
     const newProjectile = {
       x: width / 2,
@@ -136,7 +136,7 @@ export default Game = () => {
     updatedEFragments.forEach((fragment, fragmentIndex) => {
       fragment.velocity.x *= friction;
       fragment.velocity.y *= friction;
-      fragment.alpha -= 0.005;
+      fragment.alpha -= 0.01;
       if(fragment.alpha <= 0){
         updatedEFragments.splice(fragmentIndex, 1);
       }
@@ -211,9 +211,12 @@ export default Game = () => {
        spawnEnemies();
         animationId = setInterval(() => {
           update();
-        }, 1/frames);
+        }, 1000/frames);
     }
-    return () => clearInterval(animationId);
+    return () => {
+      clearInterval(animationId);
+      clearInterval(spawnEnemyId);
+    }
   },[modalVisible]);
 
 
