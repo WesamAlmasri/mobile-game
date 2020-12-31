@@ -12,7 +12,7 @@ height = Dimensions.get('window').height;
 width = Dimensions.get('window').width;
 
 export default CustomModal = (props) => {
-  const { modalVisible, onPressButton, modalText1, modalText2, buttonText } = props;
+  const { modalVisible, onPressButton, modalText1, modalText2, modalText3, buttonText } = props;
 
   return (
     <Modal
@@ -22,6 +22,7 @@ export default CustomModal = (props) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <Text style={styles.modalText3}>{modalText3}</Text>
             <Text style={styles.modalText1}>{modalText1}</Text>
             <Text style={styles.modalText2}>{modalText2}</Text>
             <TouchableHighlight
@@ -79,6 +80,11 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   modalText2: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 17,
+  },
+  modalText3: {
     marginBottom: 15,
     textAlign: "center",
     fontSize: 17,
