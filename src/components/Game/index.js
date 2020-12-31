@@ -10,6 +10,8 @@ import Fragment from '../Fragment';
 import styles from './styles'
 import ScoreLabel from '../ScoreLabel';
 import CustomModal from '../CustomModal';
+import { Audio } from 'expo-av';
+
 
 const frames = 60;
 const playerRadius = 10;
@@ -29,6 +31,8 @@ export default Game = () => {
     score: 0,
   });
   const [modalVisible, setModalVisible] = useState(true);
+  const [sound, setSound] = useState();
+
 
   const onModalPressButton = () => {
     setParticles({
@@ -42,6 +46,7 @@ export default Game = () => {
 
   // add projectiles when press
   const handlePress = (e) => {
+    playSound('fire');
     const angle = Math.atan2(e.nativeEvent.locationY - height / 2, e.nativeEvent.locationX - width / 2)
     const velocity ={
       x: Math.cos(angle) * 8,
@@ -173,12 +178,14 @@ export default Game = () => {
           }
 
           if(enemy.radius - 10 > 5) {
+            playSound('hit');
             //increase score
             updatedScore += 100;
             // enemy shrink
             enemy.radius -= 5;
             updatedProjectiles.splice(projectileIndex, 1);
           } else {
+            playSound('explode');
             //increase score
             updatedScore += 250;
             //remove from the scene
@@ -204,6 +211,35 @@ export default Game = () => {
   });
 }
 
+async function playSound(action) {
+    if(action === 'fire'){
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/audio/Bullet_Ricochet_Sharp.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    }else if (action === 'hit'){
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/audio/Bullet_Hit_Body.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    }else if(action === 'explode'){
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/audio/Bomb.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    }
+
+   }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync(); }
+      : undefined;
+  }, [sound]);
   
   // called at first render to start game 60 fps
   useEffect(() => {
