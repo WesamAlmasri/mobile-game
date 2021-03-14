@@ -1,4 +1,4 @@
-# mobile-game (pop the ballons)
+# mobile-game
 
 ## Description
 
