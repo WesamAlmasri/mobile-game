@@ -14,10 +14,10 @@ import {HIGHESTSCORE, storeData, getData} from '../helper';
 import { Audio } from 'expo-av';
 
 
-const frames = 60;
 const playerRadius = 10;
 const friction = 0.98;
 let animationId;
+let gameEnded = false;
 let spawnEnemyId;
 
 height = Dimensions.get('window').height;
@@ -166,7 +166,7 @@ export default Game = () => {
       fragment.velocity.x *= friction;
       fragment.velocity.y *= friction;
       fragment.alpha -= 0.01;
-      if(fragment.alpha <= 0){
+      if(fragment.alpha <= 0.05){
         updatedEFragments.splice(fragmentIndex, 1);
       }
     })
@@ -177,7 +177,7 @@ export default Game = () => {
       const dist = Math.hypot(width / 2 - enemy.x, height / 2 - enemy.y);
       if(dist - enemy.radius - playerRadius < 1) {
         // end game
-        clearInterval(animationId);
+        gameEnded = true;
         clearInterval(spawnEnemyId);
         setModalVisible(true);
       }
@@ -197,7 +197,7 @@ export default Game = () => {
               radius: Math.random() * 3,
               color: enemy.color,
               velocity: {x: (Math.random() -0.5) * (Math.random() * 6), y: (Math.random() -0.5) * (Math.random() * 6)},
-              alpha: 0.3,
+              alpha: 0.35,
             })
           }
 
@@ -233,6 +233,9 @@ export default Game = () => {
       score: updatedScore,
     })
   });
+  if(!gameEnded){
+    animationId = requestAnimationFrame(update);
+  }
 }
 
 // async function playSound(action) {
@@ -269,12 +272,11 @@ export default Game = () => {
   useEffect(() => {
     if(!modalVisible){
        spawnEnemies();
-        animationId = setInterval(() => {
-          update();
-        }, 1000/frames);
+       animationId = requestAnimationFrame(update);
     }
     return () => {
-      clearInterval(animationId);
+      gameEnded = false;
+      cancelAnimationFrame(animationId);
       clearInterval(spawnEnemyId);
     }
   },[modalVisible]);
